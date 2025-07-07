@@ -1,0 +1,26 @@
+# archivos de sistema
+__pycache__
+/__pycache__
+
+.env
+venv
+/venv
+
+
+# archivos de django
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
+*.pyc
+*.pyo
+*.pyd
