@@ -1,0 +1,21 @@
+Todo list project
+
+-Activate virtual enviroment and create new proyect django
+-Base pages / templates
+    -Create app for pages
+    -Create base template
+    -Create front page 
+    -Create about page
+-Authentication
+    -Create database model for userprofiles
+    -Make it possible to sign up
+    -Make it possible to log in
+    -Make it possible log out session
+-Simple Dashboard
+-Create new leads
+-Change and dalete to leads
+-Convert leads to clients
+-Change and delete to clients
+-Implements solutions to clients
+-Implements a payment solutions / Montly recurring payments
+-Deploy
