@@ -25,6 +25,8 @@ urlpatterns = [
     path('', index, name='index'),
     # url dashboard
     path('dashboard/', include('dashboard.urls')),
+    # url lead
+    path('dashboard/lead/', include('lead.urls')),
 
     # authentication
     path('sign-up/', signup, name='signup'),
