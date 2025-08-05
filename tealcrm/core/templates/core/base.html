@@ -23,6 +23,15 @@
         </div>
     </nav>
 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="bg-green-100 border-t border-b border-teal-500 text-blue-700 px-4 py-3" role="alert">
+                <p class="font-bold">Informational message</p>
+                <p class="text-sm">{{ message }}</p>
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% block content %}
     {% endblock %}
 
@@ -30,4 +39,18 @@
         Copy (c) 2025 - Teal CRM
     </footer>
 </body>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-dismiss-target]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const selector = btn.getAttribute('data-dismiss-target');
+        const alert = document.querySelector(selector);
+        if (alert) {
+          alert.remove();
+        }
+      });
+    });
+  });
+</script>
+
 </html>

@@ -30,10 +30,13 @@
       <a href="{% url 'lead:list_lead' %}" class="inline-block bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded shadow">
         ← Volver a la lista
       </a>
-      <a href="#" class="inline-block bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded shadow">
+      <a href="{% url 'lead:lead_convert' lead.id %}" class="inline-block bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded shadow">
+        Convertir Lead a Cliente
+      </a>
+      <a href="{% url 'lead:lead_edit' lead.id %}" class="inline-block bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-5 rounded shadow">
         Editar Lead
       </a>
-      <a href="{% url 'lead:leads_delete' lead.id %}" class="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-5 rounded shadow">
+      <a href="{% url 'lead:lead_delete' lead.id %}" class="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-5 rounded shadow">
         Eliminar Lead
       </a>
     </div>
