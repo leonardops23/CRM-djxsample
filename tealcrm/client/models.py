@@ -10,7 +10,10 @@ class Client(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def short_description(self):
-        return self.description[:100] + '...' if self.description else 'No description'
+        if self.description:
+            description_text = str(self.description)
+            return description_text[:100] + '...'
+        return 'No description'
 
     def __str__(self):
         return f"{self.name} ({self.email})"

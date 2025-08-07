@@ -22,6 +22,19 @@
       <p><span class="font-medium text-gray-700">Fecha de creación:</span> {{ client.created_at|date:"d/m/Y H:i" }}</p>
       <p><span class="font-medium text-gray-700">Última modificación:</span> {{ client.modified_at|date:"d/m/Y H:i" }}</p>
     </div>
+    <div class="mt-8">
+      <a href="{% url 'clients_list' %}" class="inline-block px-4 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700">
+        Volver a la lista
+      </a>
+      <a href="#" class="inline-block px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
+        Editar cliente
+      </a>
+      <a href="{% url 'client_delete' client.id %}" class="inline-block px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+        Eliminar cliente
+      </a>
+
+    </div>
+
     </div>
   </div>
 </div>

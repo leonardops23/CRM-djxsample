@@ -1,0 +1,77 @@
+🧱 1. Módulos básicos del CRM
+1.1. Gestión de Leads (Clientes Potenciales)
+Añadir, editar, eliminar leads
+
+Convertir leads en clientes
+
+Estado del lead (nuevo, contactado, interesado, perdido)
+
+1.2. Gestión de Clientes
+Ver perfil del cliente
+
+Registrar notas o interacciones
+
+Asignar cliente a un usuario/vendedor
+
+1.3. Tareas y Seguimiento
+Crear tareas relacionadas a leads o clientes
+
+Fechas de vencimiento
+
+Notificaciones o alertas de seguimiento
+
+1.4. Pipeline de Ventas
+Ver el estado de cada lead en un pipeline (kanban)
+
+Cambiar el estado arrastrando (drag & drop, usando JS)
+
+1.5. Dashboard (Panel Principal)
+Número de leads por estado
+
+Ventas realizadas
+
+Actividades recientes
+
+⚙️ 2. Funcionalidades adicionales
+2.1. Autenticación y usuarios
+Registro y login con django.contrib.auth
+
+Roles (administrador, vendedor, supervisor)
+
+Middleware para restringir acceso
+
+2.2. Registro de actividad
+Quién creó o modificó un cliente/lead
+
+Historial de cambios (con Django signals)
+
+2.3. Mensajes internos / Notificaciones
+Notificaciones cuando se asigna un lead
+
+Comentarios en clientes o tareas
+
+2.4. Correo electrónico
+Enviar correos desde el CRM a leads
+
+Plantillas de correo personalizables
+
+2.5. Exportar datos
+Exportar a CSV o PDF (por ejemplo, lista de clientes)
+
+Reportes de ventas
+
+📊 3. Ideas para el diseño (Frontend)
+Usa TailwindCSS o Bootstrap
+
+Añade gráficos con Chart.js para el dashboard
+
+Usa HTMX o Alpine.js para hacer interacciones rápidas sin recargar la página
+
+🛠️ 4. Tecnología y herramientas útiles
+Herramienta	Para qué sirve
+Django	Backend principal
+Django REST Framework (opcional)	Si quieres API para frontend separado
+PostgreSQL	Base de datos recomendada
+Celery + Redis	Tareas en segundo plano (enviar correo, recordatorios)
+Docker	Contenerizar tu app
+Git + GitHub	Control de versiones

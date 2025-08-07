@@ -30,8 +30,6 @@ urlpatterns = [
     # url client
     path('dashboard/client/', include('client.urls')),
 
-
-
     # authentication
     path('sign-up/', signup, name='signup'),
     path('log-in/', auth_views.LoginView.as_view(template_name='userprofile/log_in.html'), name='login'),

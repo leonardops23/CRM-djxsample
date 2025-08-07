@@ -13,7 +13,8 @@
             <a href="{% url 'about' %}" class="py-4 px-6 rounded-xl text-white">About</a>
             {% if request.user.is_authenticated %}
                 <a href="{% url 'dashboard' %}" class="py-4 px-6 rounded-xl text-white">Dashboard</a>
-                <a href="{% url 'lead:list_lead' %}" class="py-4 px-6 rounded-xl text-white">Lead List</a>
+                <a href="{% url 'lead:list_lead' %}" class="py-4 px-6 rounded-xl text-white">Leads</a>
+                <a href="{% url 'client:client_list' %}" class="py-4 px-6 rounded-xl text-white">Clientes</a>
                 <span class="py-4 px-6 rounded-xl text-white">Welcome, {{ request.user.username }}</span>
                 <a href="{% url 'logout' %}" class="py-4 px-6 rounded-xl bg-red-500 text-white">Log out</a>
             {% else %}
@@ -25,8 +26,8 @@
 
     {% if messages %}
         {% for message in messages %}
-            <div class="bg-green-100 border-t border-b border-teal-500 text-blue-700 px-4 py-3" role="alert">
-                <p class="font-bold">Informational message</p>
+            <div class="bg-green-100 border-t border-b border-green-500 text-green-700 px-4 py-3" role="alert">
+                <p class="font-bold">Success</p>
                 <p class="text-sm">{{ message }}</p>
             </div>
         {% endfor %}
@@ -39,18 +40,4 @@
         Copy (c) 2025 - Teal CRM
     </footer>
 </body>
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('[data-dismiss-target]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const selector = btn.getAttribute('data-dismiss-target');
-        const alert = document.querySelector(selector);
-        if (alert) {
-          alert.remove();
-        }
-      });
-    });
-  });
-</script>
-
 </html>
