@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ oportunidad.titulo }} - CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-trophy"></i> {{ oportunidad.titulo }}</h2>
+    <div class="btn-group">
+        <a href="{% url 'oportunidad_editar' oportunidad.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        <a href="{% url 'oportunidad_lista' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Información Principal -->
+    <div class="col-md-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información General</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Cliente:</strong>
+                        <p class="mb-0">
+                            <a href="{% url 'cliente_detalle' oportunidad.cliente.pk %}" class="text-decoration-none">
+                                {{ oportunidad.cliente.nombre }}
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Estado:</strong>
+                        <p class="mb-0">
+                            <span class="badge bg-{% if oportunidad.estado == 'nueva' %}primary{% elif oportunidad.estado == 'en_progreso' %}warning{% elif oportunidad.estado == 'ganada' %}success{% elif oportunidad.estado == 'perdida' %}danger{% else %}secondary{% endif %}">
+                                {{ oportunidad.get_estado_display }}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Valor:</strong>
+                        <p class="mb-0 text-success fw-bold">${{ oportunidad.valor|floatformat:0 }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Probabilidad:</strong>
+                        <p class="mb-0">{{ oportunidad.probabilidad }}%</p>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>Tipo:</strong>
+                        <p class="mb-0">{{ oportunidad.get_tipo_display }}</p>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>Fuente:</strong>
+                        <p class="mb-0">{{ oportunidad.get_fuente_display }}</p>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Descripción:</strong>
+                    <p class="mb-0">{{ oportunidad.descripcion|linebreaks }}</p>
+                </div>
+                
+                {% if oportunidad.notas %}
+                <div class="mb-3">
+                    <strong>Notas:</strong>
+                    <p class="mb-0">{{ oportunidad.notas|linebreaks }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sidebar con Información Adicional -->
+    <div class="col-md-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-calendar"></i> Fechas</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Creada:</strong>
+                    <p class="mb-0 text-muted">{{ oportunidad.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                </div>
+                <div class="mb-3">
+                    <strong>Fecha de Cierre:</strong>
+                    <p class="mb-0 text-muted">{{ oportunidad.fecha_cierre|date:"d/m/Y" }}</p>
+                </div>
+                {% if oportunidad.fecha_cierre %}
+                    <div class="mb-3">
+                        <strong>Días Restantes:</strong>
+                        <p class="mb-0">
+                            {% if oportunidad.fecha_cierre|date:"U" > now|date:"U" %}
+                                <span class="text-success">{{ oportunidad.fecha_cierre|timeuntil:now }}</span>
+                            {% else %}
+                                <span class="text-danger">Vencida</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-person"></i> Asignación</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Asignado a:</strong>
+                    <p class="mb-0">{{ oportunidad.asignado_a.get_full_name|default:oportunidad.asignado_a.username }}</p>
+                </div>
+                <div class="mb-3">
+                    <strong>Email:</strong>
+                    <p class="mb-0 text-muted">{{ oportunidad.asignado_a.email }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-graph-up"></i> Métricas</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Valor Esperado:</strong>
+                    <p class="mb-0 text-primary fw-bold">
+                        ${{ oportunidad.valor_esperado|floatformat:0|default:"0" }}
+                    </p>
+                </div>
+                <div class="mb-3">
+                    <strong>ROI Estimado:</strong>
+                    <p class="mb-0 text-success">
+                        {{ oportunidad.roi_estimado|floatformat:1|default:"0" }}%
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tareas Relacionadas -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-check2-square"></i> Tareas Relacionadas</h5>
+                <a href="{% url 'tarea_crear' %}?oportunidad={{ oportunidad.pk }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle"></i> Nueva Tarea
+                </a>
+            </div>
+            <div class="card-body">
+                {% if oportunidad.tareas.all %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Estado</th>
+                                    <th>Prioridad</th>
+                                    <th>Fecha Vencimiento</th>
+                                    <th>Asignado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tarea in oportunidad.tareas.all %}
+                                <tr>
+                                    <td>{{ tarea.titulo }}</td>
+                                    <td>
+                                        <span class="badge bg-{% if tarea.estado == 'pendiente' %}warning{% elif tarea.estado == 'en_progreso' %}info{% elif tarea.estado == 'completada' %}success{% else %}secondary{% endif %}">
+                                            {{ tarea.get_estado_display }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{% if tarea.prioridad == 'alta' %}danger{% elif tarea.prioridad == 'media' %}warning{% else %}success{% endif %}">
+                                            {{ tarea.get_prioridad_display }}
+                                        </span>
+                                    </td>
+                                    <td>{{ tarea.fecha_vencimiento|date:"d/m/Y" }}</td>
+                                    <td>{{ tarea.asignado_a.get_full_name|default:tarea.asignado_a.username }}</td>
+                                    <td>
+                                        <a href="{% url 'tarea_detalle' tarea.pk %}" class="btn btn-outline-primary btn-sm">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center py-3">No hay tareas relacionadas con esta oportunidad.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

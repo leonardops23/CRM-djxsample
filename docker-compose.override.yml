@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # Override para desarrollo
+  web:
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    environment:
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=res_crm.settings
+    ports:
+      - "8000:8000"
+    # Para desarrollo, no necesitamos restart
+    restart: "no"
+
+  # Nginx no es necesario para desarrollo
+  nginx:
+    profiles:
+      - nginx
+
+  # Base de datos para desarrollo
+  db:
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=crm_dev
+      - POSTGRES_USER=crm_user
+      - POSTGRES_PASSWORD=crm_password
+
+  # Redis para desarrollo
+  redis:
+    ports:
+      - "6379:6379"

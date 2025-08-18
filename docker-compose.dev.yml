@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Base de datos PostgreSQL para desarrollo
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=crm_dev
+      - POSTGRES_USER=crm_user
+      - POSTGRES_PASSWORD=crm_password
+    ports:
+      - "5432:5432"
+    networks:
+      - crm_dev_network
+
+  # Redis para desarrollo
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - crm_dev_network
+
+  # Aplicación Django para desarrollo
+  web:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - static_dev_volume:/app/static
+      - media_dev_volume:/app/media
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=res_crm.settings
+      - DATABASE_URL=postgresql://crm_user:crm_password@db:5432/crm_dev
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+    networks:
+      - crm_dev_network
+    # Para desarrollo, no necesitamos restart automático
+    restart: "no"
+
+volumes:
+  postgres_dev_data:
+  static_dev_volume:
+  media_dev_volume:
+
+networks:
+  crm_dev_network:
+    driver: bridge

@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ cliente.nombre }} - Cliente{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-person-circle"></i> {{ cliente.nombre }}</h1>
+    <div class="btn-group" role="group">
+        <a href="{% url 'cliente_editar' cliente.pk %}" class="btn btn-warning">
+            <i class="bi bi-pencil"></i> Editar
+        </a>
+        <a href="{% url 'crear_contacto_cliente' cliente.pk %}" class="btn btn-success">
+            <i class="bi bi-chat-dots"></i> Nuevo Contacto
+        </a>
+        <a href="{% url 'cliente_eliminar' cliente.pk %}" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Eliminar
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <!-- Información del Cliente -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-person-vcard"></i> Información Personal</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Email:</dt>
+                    <dd class="col-sm-8">{{ cliente.email }}</dd>
+                    
+                    <dt class="col-sm-4">Teléfono:</dt>
+                    <dd class="col-sm-8">{{ cliente.telefono }}</dd>
+                    
+                    {% if cliente.empresa %}
+                    <dt class="col-sm-4">Empresa:</dt>
+                    <dd class="col-sm-8">{{ cliente.empresa }}</dd>
+                    {% endif %}
+                    
+                    <dt class="col-sm-4">Tipo:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-info">{{ cliente.get_tipo_display }}</span>
+                    </dd>
+                    
+                    <dt class="col-sm-4">Estado:</dt>
+                    <dd class="col-sm-8">
+                        <span class="badge bg-{% if cliente.estado == 'activo' %}success{% elif cliente.estado == 'prospecto' %}warning{% else %}secondary{% endif %}">
+                            {{ cliente.get_estado_display }}
+                        </span>
+                    </dd>
+                    
+                    <dt class="col-sm-4">Registro:</dt>
+                    <dd class="col-sm-8">{{ cliente.fecha_registro|date:"d/m/Y H:i" }}</dd>
+                </dl>
+                
+                {% if cliente.direccion %}
+                <hr>
+                <h6>Dirección:</h6>
+                <p>{{ cliente.direccion }}</p>
+                {% endif %}
+                
+                {% if cliente.notas %}
+                <hr>
+                <h6>Notas:</h6>
+                <p>{{ cliente.notas }}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <!-- Oportunidades -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-trophy"></i> Oportunidades</h5>
+                <a href="{% url 'oportunidad_crear' %}?cliente={{ cliente.pk }}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-plus"></i> Nueva
+                </a>
+            </div>
+            <div class="card-body">
+                {% if oportunidades %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Valor</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for oportunidad in oportunidades %}
+                            <tr>
+                                <td>{{ oportunidad.titulo }}</td>
+                                <td>${{ oportunidad.valor|floatformat:2 }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ oportunidad.get_estado_display }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ oportunidad.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">No hay oportunidades registradas</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Tareas Pendientes -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="bi bi-check2-square"></i> Tareas Pendientes</h5>
+                <a href="{% url 'tarea_crear' %}?cliente={{ cliente.pk }}" class="btn btn-sm btn-info">
+                    <i class="bi bi-plus"></i> Nueva
+                </a>
+            </div>
+            <div class="card-body">
+                {% if tareas %}
+                {% for tarea in tareas %}
+                <div class="d-flex justify-content-between align-items-center mb-2 p-2 border rounded">
+                    <div>
+                        <h6 class="mb-1">{{ tarea.titulo }}</h6>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar"></i> {{ tarea.fecha_vencimiento|date:"d/m/Y H:i" }}
+                        </small>
+                    </div>
+                    <div>
+                        <a href="{% url 'tarea_completar' tarea.pk %}" class="btn btn-sm btn-success">
+                            <i class="bi bi-check"></i>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted">No hay tareas pendientes</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Historial de Contactos -->
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-clock-history"></i> Historial de Contactos</h5>
+            </div>
+            <div class="card-body">
+                {% if contactos %}
+                {% for contacto in contactos %}
+                <div class="border-start border-3 border-primary ps-3 mb-3">
+                    <div class="d-flex justify-content-between">
+                        <h6>{{ contacto.asunto }}</h6>
+                        <small class="text-muted">{{ contacto.fecha|date:"d/m/Y H:i" }}</small>
+                    </div>
+                    <p class="mb-1">{{ contacto.descripcion }}</p>
+                    <small class="text-muted">
+                        <span class="badge bg-secondary">{{ contacto.get_tipo_display }}</span>
+                        por {{ contacto.usuario.username }}
+                    </small>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-muted">No hay contactos registrados</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

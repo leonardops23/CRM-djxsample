@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Dashboard - CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-speedometer2"></i> Dashboard</h1>
+    <div class="btn-group" role="group">
+        <a href="{% url 'cliente_crear' %}" class="btn btn-primary">
+            <i class="bi bi-person-plus"></i> Nuevo Cliente
+        </a>
+        <a href="{% url 'oportunidad_crear' %}" class="btn btn-success">
+            <i class="bi bi-trophy"></i> Nueva Oportunidad
+        </a>
+        <a href="{% url 'tarea_crear' %}" class="btn btn-info">
+            <i class="bi bi-plus-square"></i> Nueva Tarea
+        </a>
+    </div>
+</div>
+
+<!-- Estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card card-stats bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Clientes</h5>
+                        <h2>{{ total_clientes }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-people fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stats bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Oportunidades</h5>
+                        <h2>{{ total_oportunidades }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-trophy fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stats bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Tareas Pendientes</h5>
+                        <h2>{{ tareas_pendientes }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-check2-square fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-stats bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5 class="card-title">Valor Total</h5>
+                        <h2>${{ valor_total|floatformat:2 }}</h2>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="bi bi-currency-dollar fs-1"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráfico y Tareas -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-bar-chart"></i> Oportunidades por Estado</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Estado</th>
+                                <th>Cantidad</th>
+                                <th>Porcentaje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in oportunidades_por_estado %}
+                            <tr>
+                                <td>
+                                    <span class="badge bg-secondary">{{ item.estado|title }}</span>
+                                </td>
+                                <td>{{ item.count }}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                            data-width="{% widthratio item.count total_oportunidades 100 %}">
+                                            {% widthratio item.count total_oportunidades 100 %}%
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Oportunidades Recientes -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-clock-history"></i> Oportunidades Recientes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Cliente</th>
+                                <th>Valor</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for oportunidad in oportunidades_recientes %}
+                            <tr>
+                                <td>{{ oportunidad.titulo }}</td>
+                                <td>{{ oportunidad.cliente.nombre }}</td>
+                                <td>${{ oportunidad.valor|floatformat:2 }}</td>
+                                <td>
+                                    <span class="badge bg-primary">{{ oportunidad.get_estado_display }}</span>
+                                </td>
+                                <td>
+                                    <a href="{{ oportunidad.get_absolute_url }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-alarm"></i> Próximas Tareas</h5>
+            </div>
+            <div class="card-body">
+                {% for tarea in proximas_tareas %}
+                <div class="d-flex justify-content-between align-items-center mb-3 p-2 border rounded">
+                    <div>
+                        <h6 class="mb-1">{{ tarea.titulo }}</h6>
+                        <small class="text-muted">{{ tarea.cliente.nombre }}</small><br>
+                        <small class="text-danger">
+                            <i class="bi bi-calendar"></i> {{ tarea.fecha_vencimiento|date:"d/m/Y H:i" }}
+                        </small>
+                    </div>
+                    <div>
+                        <a href="{% url 'tarea_completar' tarea.pk %}" class="btn btn-sm btn-success">
+                            <i class="bi bi-check"></i>
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-muted">No hay tareas próximas</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Apply progress bar widths from data attributes
+    document.querySelectorAll('.progress-bar[data-width]').forEach(function(bar) {
+        const width = bar.getAttribute('data-width');
+        bar.style.width = width + '%';
+    });
+});
+</script>
+{% endblock %}

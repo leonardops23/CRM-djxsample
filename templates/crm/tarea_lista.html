@@ -1,0 +1,197 @@
+{% extends 'base.html' %}
+
+{% block title %}Tareas - CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-check2-square"></i> Mis Tareas</h2>
+    <a href="{% url 'tarea_crear' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nueva Tarea
+    </a>
+</div>
+
+<!-- Filtros -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="btn-group" role="group">
+            <a href="?estado=" class="btn btn-outline-secondary {% if not request.GET.estado %}active{% endif %}">
+                Todas
+            </a>
+            <a href="?estado=pendiente" class="btn btn-outline-warning {% if request.GET.estado == 'pendiente' %}active{% endif %}">
+                Pendientes
+            </a>
+            <a href="?estado=en_progreso" class="btn btn-outline-info {% if request.GET.estado == 'en_progreso' %}active{% endif %}">
+                En Progreso
+            </a>
+            <a href="?estado=completada" class="btn btn-outline-success {% if request.GET.estado == 'completada' %}active{% endif %}">
+                Completadas
+            </a>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Buscar tareas..." id="searchInput">
+            <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                <i class="bi bi-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+{% if tareas %}
+    <div class="row">
+        {% for tarea in tareas %}
+        <div class="col-md-6 col-lg-4 mb-3">
+            <div class="card h-100 shadow-sm {% if tarea.estado == 'completada' %}border-success{% elif tarea.fecha_vencimiento and tarea.fecha_vencimiento < now %}border-danger{% endif %}">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="card-title mb-0 {% if tarea.estado == 'completada' %}text-decoration-line-through{% endif %}">
+                            {{ tarea.titulo }}
+                        </h6>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'tarea_detalle' tarea.pk %}">
+                                    <i class="bi bi-eye"></i> Ver
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'tarea_editar' tarea.pk %}">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a></li>
+                                {% if tarea.estado != 'completada' %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-success" href="{% url 'tarea_completar' tarea.pk %}">
+                                    <i class="bi bi-check-circle"></i> Completar
+                                </a></li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <p class="card-text text-muted small mb-2">
+                        {{ tarea.descripcion|truncatewords:15 }}
+                    </p>
+                    
+                    {% if tarea.cliente %}
+                    <p class="card-text text-muted small mb-2">
+                        <i class="bi bi-building"></i> {{ tarea.cliente.nombre }}
+                    </p>
+                    {% endif %}
+                    
+                    {% if tarea.oportunidad %}
+                    <p class="card-text text-muted small mb-2">
+                        <i class="bi bi-trophy"></i> {{ tarea.oportunidad.titulo }}
+                    </p>
+                    {% endif %}
+                    
+                    <div class="row text-center mb-3">
+                        <div class="col-6">
+                            <span class="badge bg-{% if tarea.estado == 'pendiente' %}warning{% elif tarea.estado == 'en_progreso' %}info{% elif tarea.estado == 'completada' %}success{% else %}secondary{% endif %}">
+                                {{ tarea.get_estado_display }}
+                            </span>
+                        </div>
+                        <div class="col-6">
+                            <span class="badge bg-{% if tarea.prioridad == 'alta' %}danger{% elif tarea.prioridad == 'media' %}warning{% else %}success{% endif %}">
+                                {{ tarea.get_prioridad_display }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="bi bi-calendar"></i> 
+                            {% if tarea.fecha_vencimiento %}
+                                {{ tarea.fecha_vencimiento|date:"d/m/Y" }}
+                                {% if tarea.fecha_vencimiento < now and tarea.estado != 'completada' %}
+                                    <span class="text-danger">(Vencida)</span>
+                                {% endif %}
+                            {% else %}
+                                Sin fecha
+                            {% endif %}
+                        </small>
+                        {% if tarea.estado == 'completada' %}
+                            <small class="text-success">
+                                <i class="bi bi-check-circle"></i> Completada
+                            </small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    {% if is_paginated %}
+    <nav aria-label="Navegación de páginas">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">&laquo; Primera</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">Anterior</a>
+                </li>
+            {% endif %}
+            
+            <li class="page-item active">
+                <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">Siguiente</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.estado %}&estado={{ request.GET.estado }}{% endif %}">Última &raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+    
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-check2-square display-1 text-muted"></i>
+        <h4 class="text-muted mt-3">No hay tareas</h4>
+        <p class="text-muted">
+            {% if request.GET.estado %}
+                No hay tareas con el estado seleccionado.
+            {% else %}
+                Comienza creando tu primera tarea.
+            {% endif %}
+        </p>
+        <a href="{% url 'tarea_crear' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Crear Tarea
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.getElementById('searchBtn').addEventListener('click', function() {
+    const searchTerm = document.getElementById('searchInput').value;
+    const currentUrl = new URL(window.location);
+    if (searchTerm.trim()) {
+        currentUrl.searchParams.set('search', searchTerm);
+    } else {
+        currentUrl.searchParams.delete('search');
+    }
+    window.location.href = currentUrl.toString();
+});
+
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        document.getElementById('searchBtn').click();
+    }
+});
+
+// Mantener el valor de búsqueda en el input
+const urlParams = new URLSearchParams(window.location.search);
+const searchParam = urlParams.get('search');
+if (searchParam) {
+    document.getElementById('searchInput').value = searchParam;
+}
+</script>
+{% endblock %}

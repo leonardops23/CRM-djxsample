@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if form.instance.pk %}Editar{% else %}Nuevo{% endif %} Cliente - CRM{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>
+                    <i class="bi bi-person-{% if form.instance.pk %}check{% else %}plus{% endif %}"></i>
+                    {% if form.instance.pk %}Editar Cliente{% else %}Nuevo Cliente{% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    {% crispy form %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6><i class="bi bi-info-circle"></i> Información</h6>
+            </div>
+            <div class="card-body">
+                <p><strong>Campos obligatorios:</strong> Nombre, Email y Teléfono</p>
+                <p><strong>Tipos de cliente:</strong></p>
+                <ul>
+                    <li><strong>Persona Natural:</strong> Cliente individual</li>
+                    <li><strong>Empresa:</strong> Cliente corporativo</li>
+                </ul>
+                <p><strong>Estados:</strong></p>
+                <ul>
+                    <li><strong>Prospecto:</strong> Cliente potencial</li>
+                    <li><strong>Activo:</strong> Cliente actual</li>
+                    <li><strong>Inactivo:</strong> Cliente que ya no trabaja con nosotros</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

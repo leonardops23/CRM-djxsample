@@ -1,0 +1,38 @@
+# Django y dependencias principales
+asgiref==3.9.1
+crispy-bootstrap5==2025.6
+Django==5.2.5
+django-crispy-forms==2.4
+pillow==11.3.0
+sqlparse==0.5.3
+
+# Base de datos PostgreSQL
+psycopg2-binary==2.9.9
+
+# Redis para cache y sesiones
+redis==5.0.1
+django-redis==5.4.0
+
+# Servidor WSGI para producción
+gunicorn==21.2.0
+
+# Variables de entorno
+python-decouple==3.8
+
+# Seguridad
+django-cors-headers==4.3.1
+
+# Monitoreo y logging
+sentry-sdk[django]==1.40.4
+
+# Compresión de archivos estáticos
+django-compressor==4.4
+
+# Optimización de imágenes
+Pillow==11.3.0
+
+# Validación de datos
+django-validators==0.5.0
+
+# API REST (opcional)
+djangorestframework==3.14.0
